@@ -10,6 +10,7 @@ interface NavbarProps {
 export const Navbar: React.FC<NavbarProps> = ({ onOpenAdmin }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [isDark, setIsDark] = useState(true);
+  const [scrollPercent, setScrollPercent] = useState(0);
   const { isAdmin } = useAuth();
 
   useEffect(() => {
@@ -18,6 +19,16 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAdmin }) => {
     const initialTheme = prefersDark ? 'dark' : 'dark'; // default to dark as per design spec
     document.documentElement.setAttribute('data-theme', initialTheme);
     setIsDark(initialTheme === 'dark');
+
+    // Scroll progress tracker
+    const handleScroll = () => {
+      const totalHeight = document.documentElement.scrollHeight - window.innerHeight;
+      if (totalHeight > 0) {
+        setScrollPercent(Math.min(100, Math.max(0, (window.scrollY / totalHeight) * 100)));
+      }
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
   const toggleTheme = () => {
@@ -37,6 +48,9 @@ export const Navbar: React.FC<NavbarProps> = ({ onOpenAdmin }) => {
 
   return (
     <header>
+      {/* Scroll-triggered progress indicator */}
+      <div className="scroll-progress-bar" style={{ width: `${scrollPercent}%` }} aria-hidden="true" />
+
       <div className="wrap">
         <nav>
           <a className="logo" href="#top">

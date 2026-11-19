@@ -1,4 +1,6 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Plus, Minus } from 'lucide-react';
 import { FAQItem } from '../../types';
 import { LetterReveal } from '../common/LetterReveal';
 
@@ -65,6 +67,11 @@ const DEFAULT_FAQS = [
 
 export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
   const displayFaqs = faqs && faqs.length > 0 ? faqs : DEFAULT_FAQS;
+  const [openId, setOpenId] = useState<string | null>(displayFaqs[0]?.id || 'f1');
+
+  const toggleFaq = (id: string) => {
+    setOpenId(openId === id ? null : id);
+  };
 
   return (
     <section className="s" id="faq">
@@ -74,13 +81,88 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ faqs }) => {
           <LetterReveal as="h2" text="Good to know." />
         </div>
 
-        <div className="faq">
-          {displayFaqs.map((faq, idx) => (
-            <details key={faq.id || idx} open={idx === 0}>
-              <summary>{faq.question}</summary>
-              <p>{faq.answer}</p>
-            </details>
-          ))}
+        <div className="faq" style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+          {displayFaqs.map((faq, idx) => {
+            const currentId = faq.id || `faq-${idx}`;
+            const isOpen = openId === currentId;
+            return (
+              <div
+                key={currentId}
+                style={{
+                  background: 'var(--card)',
+                  border: '1px solid var(--line)',
+                  borderRadius: 'var(--r)',
+                  transition: 'border-color 0.2s',
+                  borderColor: isOpen ? 'var(--lime)' : 'var(--line)',
+                  overflow: 'hidden',
+                }}
+              >
+                <button
+                  type="button"
+                  onClick={() => toggleFaq(currentId)}
+                  style={{
+                    width: '100%',
+                    padding: '1.2rem 1.4rem',
+                    background: 'none',
+                    border: 'none',
+                    color: 'var(--ink)',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'space-between',
+                    gap: '1rem',
+                    cursor: 'pointer',
+                    textAlign: 'left',
+                    fontFamily: 'var(--h)',
+                    fontSize: '1.15rem',
+                    fontWeight: 700,
+                  }}
+                  aria-expanded={isOpen}
+                >
+                  <span>{faq.question}</span>
+                  <span
+                    style={{
+                      width: '24px',
+                      height: '24px',
+                      borderRadius: '50%',
+                      background: isOpen ? 'var(--lime)' : 'rgba(255, 255, 255, 0.05)',
+                      color: isOpen ? 'var(--limeink)' : 'var(--mute)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      flexShrink: 0,
+                      transition: 'all 0.25s',
+                    }}
+                  >
+                    {isOpen ? <Minus size={14} /> : <Plus size={14} />}
+                  </span>
+                </button>
+
+                <AnimatePresence initial={false}>
+                  {isOpen && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: 'auto', opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
+                    >
+                      <div
+                        style={{
+                          padding: '0 1.4rem 1.3rem',
+                          color: 'var(--mute)',
+                          fontSize: '0.98rem',
+                          lineHeight: '1.65',
+                          borderTop: '1px solid rgba(255, 255, 255, 0.04)',
+                          paddingTop: '0.9rem',
+                        }}
+                      >
+                        {faq.answer}
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
+            );
+          })}
         </div>
       </div>
     </section>

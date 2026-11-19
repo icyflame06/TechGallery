@@ -4,6 +4,11 @@ export const TechBackground: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
+    // Respect reduced motion
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      return;
+    }
+
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
@@ -20,8 +25,8 @@ export const TechBackground: React.FC = () => {
     };
     window.addEventListener('resize', handleResize);
 
-    // Particle nodes
-    const particleCount = Math.min(Math.floor(width / 22), 55);
+    // Subtle particle nodes
+    const particleCount = Math.min(Math.floor(width / 26), 45);
     interface Particle {
       x: number;
       y: number;
@@ -33,17 +38,17 @@ export const TechBackground: React.FC = () => {
     }
 
     const particles: Particle[] = [];
-    const colors = ['#ccff00', '#00f0ff', '#ffffff'];
+    const colors = ['#00E5FF', '#4169FF', '#9B5CFF', '#F8FAFF'];
 
     for (let i = 0; i < particleCount; i++) {
       particles.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.45,
-        vy: (Math.random() - 0.5) * 0.45,
-        size: Math.random() * 2 + 1,
+        vx: (Math.random() - 0.5) * 0.28,
+        vy: (Math.random() - 0.5) * 0.28,
+        size: Math.random() * 1.8 + 0.8,
         color: colors[Math.floor(Math.random() * colors.length)],
-        alpha: Math.random() * 0.5 + 0.2,
+        alpha: Math.random() * 0.35 + 0.1,
       });
     }
 
@@ -53,17 +58,17 @@ export const TechBackground: React.FC = () => {
       mouseX = e.clientX;
       mouseY = e.clientY;
     };
-    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('mousemove', handleMouseMove, { passive: true });
 
     const render = () => {
       ctx.clearRect(0, 0, width, height);
 
-      // Draw subtle grid points
-      const gridSize = 60;
-      ctx.fillStyle = 'rgba(255, 255, 255, 0.025)';
+      // Draw subtle futuristic cybernetic grid points
+      const gridSize = 68;
+      ctx.fillStyle = 'rgba(0, 229, 255, 0.025)';
       for (let x = 0; x < width; x += gridSize) {
         for (let y = 0; y < height; y += gridSize) {
-          ctx.fillRect(x, y, 1.5, 1.5);
+          ctx.fillRect(x, y, 1.2, 1.2);
         }
       }
 
@@ -78,7 +83,7 @@ export const TechBackground: React.FC = () => {
         if (p.y < 0) p.y = height;
         else if (p.y > height) p.y = 0;
 
-        // Draw particle
+        // Draw particle node
         ctx.fillStyle = p.color;
         ctx.globalAlpha = p.alpha;
         ctx.beginPath();
@@ -92,8 +97,12 @@ export const TechBackground: React.FC = () => {
           const dy = p.y - p2.y;
           const dist = Math.sqrt(dx * dx + dy * dy);
 
-          if (dist < 140) {
-            ctx.strokeStyle = p.color === '#ccff00' ? 'rgba(204, 255, 0, 0.15)' : 'rgba(0, 240, 255, 0.12)';
+          if (dist < 135) {
+            ctx.strokeStyle = p.color === '#00E5FF' 
+              ? 'rgba(0, 229, 255, 0.12)' 
+              : p.color === '#9B5CFF'
+              ? 'rgba(155, 92, 255, 0.1)'
+              : 'rgba(65, 105, 255, 0.09)';
             ctx.lineWidth = 0.8;
             ctx.beginPath();
             ctx.moveTo(p.x, p.y);
@@ -102,12 +111,12 @@ export const TechBackground: React.FC = () => {
           }
         }
 
-        // Mouse interaction
+        // Proximity line on cursor hover
         const mdx = p.x - mouseX;
         const mdy = p.y - mouseY;
         const mdist = Math.sqrt(mdx * mdx + mdy * mdy);
-        if (mdist < 120) {
-          ctx.strokeStyle = 'rgba(204, 255, 0, 0.25)';
+        if (mdist < 140) {
+          ctx.strokeStyle = 'rgba(0, 229, 255, 0.25)';
           ctx.lineWidth = 1;
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
@@ -132,9 +141,15 @@ export const TechBackground: React.FC = () => {
   return (
     <canvas
       ref={canvasRef}
-      className="fixed inset-0 pointer-events-none z-0 opacity-70"
+      className="fixed inset-0 pointer-events-none z-0"
+      style={{
+        position: 'fixed',
+        inset: 0,
+        pointerEvents: 'none',
+        zIndex: 0,
+        opacity: 0.85,
+      }}
       aria-hidden="true"
     />
   );
 };
-

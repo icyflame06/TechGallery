@@ -18,7 +18,7 @@ def run_tests():
     db = SessionLocal()
     seed_database(db)
     db.close()
-    print("✔ Database schema & seed data initialized.")
+    print("[OK] Database schema & seed data initialized.")
 
     client = TestClient(app)
 
@@ -26,7 +26,7 @@ def run_tests():
     r = client.get("/")
     assert r.status_code == 200, f"Root failed: {r.text}"
     assert r.json()["festival"] == "TECH GALLERY 2027"
-    print("✔ Root endpoint verified.")
+    print("[OK] Root endpoint verified.")
 
     # 3. Test Events (Must have exactly the 8 official event schedule items)
     r = client.get("/api/events")
@@ -46,7 +46,7 @@ def run_tests():
     ]
     for eid in expected_ids:
         assert eid in event_ids, f"Missing event: {eid}"
-    print(f"✔ All 8 official festival events verified in database: {event_ids}")
+    print(f"[OK] All 8 official festival events verified in database: {event_ids}")
 
     # 4. Test Registration Eligibility Restrictions
     # 4a. External student attempting to register for Bhavesh Workshop -> MUST BE REJECTED (400)
@@ -61,7 +61,7 @@ def run_tests():
     }
     r = client.post("/api/registrations", json=external_attempt)
     assert r.status_code == 400, f"Expected 400 for external student on internal workshop, got {r.status_code}"
-    print("✔ External student blocked from internal Bhavesh Workshop (HTTP 400).")
+    print("[OK] External student blocked from internal Bhavesh Workshop (HTTP 400).")
 
     # 4b. External student attempting to register for Bhavesh Hackathon -> MUST BE REJECTED (400)
     hackathon_attempt = {
@@ -76,7 +76,7 @@ def run_tests():
     }
     r = client.post("/api/registrations", json=hackathon_attempt)
     assert r.status_code == 400, f"Expected 400 for external student on hackathon, got {r.status_code}"
-    print("✔ External student blocked from internal Bhavesh Hackathon (HTTP 400).")
+    print("[OK] External student blocked from internal Bhavesh Hackathon (HTTP 400).")
 
     # 4c. Valid Internal Student Registration for Bhavesh Workshop -> MUST SUCCEED (201)
     import time
@@ -95,19 +95,19 @@ def run_tests():
     reg_record = r.json()
     assert reg_record["reg_code"].startswith("TG27-REG-")
     assert reg_record["is_internal"] is True
-    print(f"✔ Internal student successfully registered: Code {reg_record['reg_code']}")
+    print(f"[OK] Internal student successfully registered: Code {reg_record['reg_code']}")
 
     # 4d. Duplicate Registration check (Same email for same event) -> MUST FAIL (409 Conflict)
     r = client.post("/api/registrations", json=internal_valid)
     assert r.status_code == 409, f"Expected 409 Conflict for duplicate email, got {r.status_code}"
-    print("✔ Duplicate registration prevented for same event (HTTP 409 Conflict).")
+    print("[OK] Duplicate registration prevented for same event (HTTP 409 Conflict).")
 
     # 4e. Duplicate Registration check (Same phone for same event with different email) -> MUST FAIL (409 Conflict)
     dup_phone = internal_valid.copy()
     dup_phone["email"] = "other_email@techgallery2027.edu"
     r = client.post("/api/registrations", json=dup_phone)
     assert r.status_code == 409, f"Expected 409 Conflict for duplicate phone, got {r.status_code}"
-    print("✔ Duplicate phone registration prevented for same event (HTTP 409 Conflict).")
+    print("[OK] Duplicate phone registration prevented for same event (HTTP 409 Conflict).")
 
     # 4f. External student registering for Tech Showcase Day 1 -> MUST SUCCEED (201)
     showcase_reg = {
@@ -121,7 +121,7 @@ def run_tests():
     }
     r = client.post("/api/registrations", json=showcase_reg)
     assert r.status_code == 201, f"Expected 201 for external showcase registration, got {r.status_code}: {r.text}"
-    print("✔ External student successfully registered for Tech Showcase Day 1.")
+    print("[OK] External student successfully registered for Tech Showcase Day 1.")
 
     # 4g. External student registering for Tech Showcase Day 2 -> MUST SUCCEED (201)
     showcase_day2_reg = {
@@ -135,7 +135,7 @@ def run_tests():
     }
     r = client.post("/api/registrations", json=showcase_day2_reg)
     assert r.status_code == 201, f"Expected 201 for external showcase day 2 registration, got {r.status_code}: {r.text}"
-    print("✔ External student successfully registered for Tech Showcase Day 2.")
+    print("[OK] External student successfully registered for Tech Showcase Day 2.")
 
     # 4h. External student attempting to register for Parents Workshop -> MUST BE REJECTED (400)
     parents_workshop_attempt = {
@@ -149,7 +149,7 @@ def run_tests():
     }
     r = client.post("/api/registrations", json=parents_workshop_attempt)
     assert r.status_code == 400, f"Expected 400 for external student on non-showcase event, got {r.status_code}"
-    print("✔ External student blocked from non-showcase event (HTTP 400).")
+    print("[OK] External student blocked from non-showcase event (HTTP 400).")
 
     # 5. Test Project Submission (Hardware & Software)
     # 5a. Submit Hardware Project
@@ -173,7 +173,7 @@ def run_tests():
     hw_record = r.json()
     assert hw_record["project_code"].startswith("TG27-PRJ-")
     assert hw_record["status"] == "pending"
-    print(f"✔ Hardware project submitted: {hw_record['project_code']} (Status: pending)")
+    print(f"[OK] Hardware project submitted: {hw_record['project_code']} (Status: pending)")
 
     # 5b. Submit Software Project
     sw_project = {
@@ -193,7 +193,7 @@ def run_tests():
     r = client.post("/api/projects", json=sw_project)
     assert r.status_code == 201, f"Project submission failed: {r.text}"
     sw_record = r.json()
-    print(f"✔ Software project submitted: {sw_record['project_code']} (Status: pending)")
+    print(f"[OK] Software project submitted: {sw_record['project_code']} (Status: pending)")
 
     # 6. Test Admin Authentication & Capabilities
     # 6a. Login
@@ -206,7 +206,7 @@ def run_tests():
     token_info = r.json()
     token = token_info["access_token"]
     headers = {"Authorization": f"Bearer {token}"}
-    print(f"✔ Admin authenticated. Role: {token_info['role']}")
+    print(f"[OK] Admin authenticated. Role: {token_info['role']}")
 
     # 6b. Stats
     r = client.get("/api/admin/stats", headers=headers)
@@ -214,7 +214,7 @@ def run_tests():
     stats = r.json()
     assert stats["total_registrations"] >= 2
     assert stats["total_projects"] >= 2
-    print(f"✔ Admin Stats: Total Regs: {stats['total_registrations']} (Internal: {stats['internal_registrations']}, External: {stats['external_registrations']}), Projects: {stats['total_projects']}")
+    print(f"[OK] Admin Stats: Total Regs: {stats['total_registrations']} (Internal: {stats['internal_registrations']}, External: {stats['external_registrations']}), Projects: {stats['total_projects']}")
 
     # 6c. Approve Project
     r = client.patch(
@@ -225,21 +225,21 @@ def run_tests():
     assert r.status_code == 200, f"Approve project failed: {r.text}"
     updated_hw = r.json()
     assert updated_hw["status"] == "approved"
-    print(f"✔ Admin approved Hardware project {hw_record['project_code']}.")
+    print(f"[OK] Admin approved Hardware project {hw_record['project_code']}.")
 
     # 6d. Verify approved project appears in public showcase
     r = client.get("/api/projects/public")
     assert r.status_code == 200
     public_projects = r.json()
     assert any(p["id"] == hw_record["id"] for p in public_projects)
-    print("✔ Approved project visible in public showcase endpoint.")
+    print("[OK] Approved project visible in public showcase endpoint.")
 
     # 6e. Test CSV Export
     r = client.get("/api/admin/registrations/export-csv", headers=headers)
     assert r.status_code == 200
     assert "text/csv" in r.headers["content-type"]
     assert "Registration Code,Full Name,Email" in r.text
-    print("✔ CSV export generated successfully with registration records.")
+    print("[OK] CSV export generated successfully with registration records.")
 
     # 6f. Update Event Status
     r = client.put(
@@ -249,7 +249,7 @@ def run_tests():
     )
     assert r.status_code == 200
     assert r.json()["registration_status"] == "waitlist"
-    print("✔ Event configuration updated by admin (Status changed to waitlist).")
+    print("[OK] Event configuration updated by admin (Status changed to waitlist).")
 
     # Reset back to open
     client.put("/api/events/bhavesh-workshop", json={"registration_status": "open"}, headers=headers)
@@ -258,14 +258,14 @@ def run_tests():
     r = client.get("/api/faqs")
     assert r.status_code == 200
     assert len(r.json()) >= 8
-    print(f"✔ Public FAQs verified ({len(r.json())} items).")
+    print(f"[OK] Public FAQs verified ({len(r.json())} items).")
 
     r = client.get("/api/settings")
     assert r.status_code == 200
     assert r.json()["festival_name"] == "TECH GALLERY 2027"
-    print("✔ Public Settings & Contact channels verified.")
+    print("[OK] Public Settings & Contact channels verified.")
 
-    print("\n🎉 ALL BACKEND VERIFICATIONS & ELIGIBILITY ENFORCEMENTS PASSED WITH 100% SUCCESS!")
+    print("\n[SUCCESS] ALL BACKEND VERIFICATIONS & ELIGIBILITY ENFORCEMENTS PASSED WITH 100% SUCCESS!")
 
 if __name__ == "__main__":
     run_tests()

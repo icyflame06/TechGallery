@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { LetterReveal } from '../common/LetterReveal';
 
 interface SessionItem {
@@ -117,16 +118,44 @@ export const ScheduleSection: React.FC = () => {
           ))}
         </div>
 
-        {/* Sessions Panel for the active day */}
+        {/* Sessions Panel for the active day with Animated Timeline */}
         <div className="sess" role="tabpanel" aria-live="polite">
-          {activeDay.sessions.map((sess, idx) => (
-            <div key={idx} className="row">
-              <span className="mono">{sess.time}</span>
-              <h3 style={{ margin: 0 }}>{sess.title}</h3>
-              <span className="mono">{sess.venue}</span>
-              <span className="tg">{sess.tag}</span>
-            </div>
-          ))}
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={activeDay.dayNumber}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -10 }}
+              transition={{ duration: 0.28, ease: [0.16, 1, 0.3, 1] }}
+            >
+              {activeDay.sessions.map((sess, idx) => (
+                <motion.div
+                  key={`${activeDay.dayNumber}-${idx}`}
+                  initial={{ opacity: 0, x: -10 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ duration: 0.3, delay: idx * 0.08, ease: [0.16, 1, 0.3, 1] }}
+                  className="row"
+                  style={{ position: 'relative' }}
+                >
+                  <span className="mono" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span
+                      style={{
+                        width: '6px',
+                        height: '6px',
+                        borderRadius: '50%',
+                        background: 'var(--lime)',
+                        display: 'inline-block',
+                      }}
+                    />
+                    {sess.time}
+                  </span>
+                  <h3 style={{ margin: 0 }}>{sess.title}</h3>
+                  <span className="mono">{sess.venue}</span>
+                  <span className="tg">{sess.tag}</span>
+                </motion.div>
+              ))}
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Bottom Schedule Sub-note */}

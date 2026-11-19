@@ -199,7 +199,10 @@ def create_registration(payload: RegistrationCreate, db: Session = Depends(get_d
     wa_link = generate_whatsapp_link(registration.phone, whatsapp_msg)
 
     # Attach dynamic non-persisted attributes for response
-    out = RegistrationOut.from_orm(registration)
+    try:
+        out = RegistrationOut.model_validate(registration, from_attributes=True)
+    except Exception:
+        out = RegistrationOut.from_orm(registration)
     out.whatsapp_url = wa_link
     out.whatsapp_message = whatsapp_msg
     return out

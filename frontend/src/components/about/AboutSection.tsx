@@ -24,22 +24,34 @@ export const AboutSection: React.FC = () => {
           </div>
         </div>
 
-        {/* 4 Metrics Strip */}
+        {/* 4 Interactive Technical Metrics Strip */}
         <div className="stats">
-          <div>
-            <b>7</b>
+          <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
+            <span className="mono" style={{ fontSize: '0.62rem', color: 'var(--lime)', letterSpacing: '0.1em' }}>
+              TELEMETRY // 01
+            </span>
+            <b style={{ marginTop: '4px' }}>7</b>
             <span className="mono">days on campus</span>
           </div>
-          <div>
-            <b>24</b>
+          <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
+            <span className="mono" style={{ fontSize: '0.62rem', color: 'var(--lime)', letterSpacing: '0.1em' }}>
+              CURRICULUM // 02
+            </span>
+            <b style={{ marginTop: '4px' }}>24</b>
             <span className="mono">workshops and talks</span>
           </div>
-          <div>
-            <b>60+</b>
+          <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
+            <span className="mono" style={{ fontSize: '0.62rem', color: 'var(--lime)', letterSpacing: '0.1em' }}>
+              EXHIBITS // 03
+            </span>
+            <b style={{ marginTop: '4px' }}>60+</b>
             <span className="mono">projects on display</span>
           </div>
-          <div>
-            <b>36h</b>
+          <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
+            <span className="mono" style={{ fontSize: '0.62rem', color: 'var(--lime)', letterSpacing: '0.1em' }}>
+              SPRINT // 04
+            </span>
+            <b style={{ marginTop: '4px' }}>36h</b>
             <span className="mono">hackathon window</span>
           </div>
         </div>

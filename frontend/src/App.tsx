@@ -19,6 +19,10 @@ import { Footer } from './components/layout/Footer';
 import { AdminLoginModal } from './components/admin/AdminLoginModal';
 import { AdminDashboard } from './components/admin/AdminDashboard';
 import { NotificationToast } from './components/layout/NotificationToast';
+import { TechnicalSeparator } from './components/common/TechnicalSeparator';
+import { ScrollReveal } from './components/common/ScrollReveal';
+import { CustomCursor } from './components/common/CustomCursor';
+import { TechLoaderOverlay } from './components/common/TechLoaderOverlay';
 
 // Default static fallback data (strictly matching the prompt requirements) in case backend is initializing
 const DEFAULT_EVENTS: EventItem[] = [
@@ -423,56 +427,105 @@ export const App: React.FC = () => {
   };
 
   return (
-    <div className="app-container">
+    <div className="app-container" style={{ position: 'relative', overflowX: 'hidden' }}>
+      {/* Cybernetic Boot Sequence Loader */}
+      <TechLoaderOverlay />
+
+      {/* Custom Interactive Desktop Cursor */}
+      <CustomCursor />
+
+      {/* Background Interactive Constellation Grid */}
+      <TechBackground />
+
       {/* Header & Sticky Nav */}
       <Navbar onOpenAdmin={handleOpenAdmin} />
 
       {/* Main Content Sections */}
-      <main id="top">
+      <main id="top" style={{ position: 'relative', zIndex: 1 }}>
         {/* A. Hero */}
         <Hero />
 
+        <TechnicalSeparator label="SYS // EXPO OVERVIEW" code="MODULE // 01.ABOUT" />
+
         {/* B. About */}
-        <AboutSection />
+        <ScrollReveal>
+          <AboutSection />
+        </ScrollReveal>
+
+        <TechnicalSeparator label="SYS // TRACK MATRIX" code="MODULE // 02.PROGRAM" />
 
         {/* C. Events (Track Overview & 8 Events Program) */}
-        <EventsTimeline
-          events={events}
-          onSelectRegister={handleSelectRegister}
-          onSelectShowcase={handleSelectShowcase}
-        />
+        <ScrollReveal>
+          <EventsTimeline
+            events={events}
+            onSelectRegister={handleSelectRegister}
+            onSelectShowcase={handleSelectShowcase}
+          />
+        </ScrollReveal>
+
+        {/* C.2 Intensive Workshops & Hackathons */}
+        <ScrollReveal>
+          <WorkshopsHackathonsSection
+            events={events}
+            onRegister={handleSelectRegister}
+          />
+        </ScrollReveal>
+
+        <TechnicalSeparator label="SYS // INNOVATION SHOWCASE" code="MODULE // 03.EXHIBITS" />
 
         {/* D. Tech Showcase */}
-        <TechShowcaseSection projects={projects} />
+        <ScrollReveal>
+          <TechShowcaseSection projects={projects} />
+        </ScrollReveal>
+
+        <TechnicalSeparator label="SYS // 7-DAY TIMELINE" code="MODULE // 04.SCHEDULE" />
 
         {/* E. 7-Day Schedule with Days Tabs & Session Rows */}
-        <ScheduleSection />
+        <ScrollReveal>
+          <ScheduleSection />
+        </ScrollReveal>
+
+        <TechnicalSeparator label="SYS // ACCREDITATION PASSES" code="MODULE // 05.ACCESS" />
 
         {/* F. Registration Section */}
-        <RegistrationSection
-          events={events}
-          preselectedEventId={preselectedEventId}
-          ourCollegeName={settings.our_college_name}
-          onOpenSubmission={(reg) => {
-            setInitialRegForSubmission(reg || null);
-            setIsSubmissionOpen(true);
-          }}
-        />
+        <ScrollReveal>
+          <RegistrationSection
+            events={events}
+            preselectedEventId={preselectedEventId}
+            ourCollegeName={settings.our_college_name}
+            onOpenSubmission={(reg) => {
+              setInitialRegForSubmission(reg || null);
+              setIsSubmissionOpen(true);
+            }}
+          />
+        </ScrollReveal>
+
+        <TechnicalSeparator label="SYS // VISUAL ARCHIVE" code="MODULE // 06.GALLERY" />
 
         {/* G. Gallery */}
-        <GallerySection items={galleryItems} />
+        <ScrollReveal>
+          <GallerySection items={galleryItems} />
+        </ScrollReveal>
+
+        <TechnicalSeparator label="SYS // INTELLIGENCE BASE" code="MODULE // 07.FAQS" />
 
         {/* H. FAQ */}
-        <FAQSection faqs={faqs} />
+        <ScrollReveal>
+          <FAQSection faqs={faqs} />
+        </ScrollReveal>
+
+        <TechnicalSeparator label="SYS // COMMUNICATIONS" code="MODULE // 08.DISPATCH" />
 
         {/* I. Contact */}
-        <ContactSection
-          collegeName={settings.our_college_name}
-          officialEmail={settings.official_email}
-          phone={settings.phone}
-          address={settings.address}
-          instagramUrl={settings.instagram_url}
-        />
+        <ScrollReveal>
+          <ContactSection
+            collegeName={settings.our_college_name}
+            officialEmail={settings.official_email}
+            phone={settings.phone}
+            address={settings.address}
+            instagramUrl={settings.instagram_url}
+          />
+        </ScrollReveal>
       </main>
 
       {/* Footer */}

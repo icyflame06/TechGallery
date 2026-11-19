@@ -13,6 +13,7 @@ export interface LetterRevealProps {
   blurAmount?: number;
   once?: boolean;
   amount?: number | 'some' | 'all';
+  mode?: 'letter' | 'word';
 }
 
 const EASING: [number, number, number, number] = [0.16, 1, 0.3, 1];
@@ -29,6 +30,7 @@ export const LetterReveal: React.FC<LetterRevealProps> = ({
   blurAmount = 8,
   once = true,
   amount = 0.25,
+  mode = 'letter',
 }) => {
   const shouldReduceMotion = useReducedMotion();
 
@@ -45,13 +47,13 @@ export const LetterReveal: React.FC<LetterRevealProps> = ({
     hidden: {},
     visible: {
       transition: {
-        staggerChildren: stagger,
+        staggerChildren: mode === 'word' ? stagger * 2.5 : stagger,
         delayChildren: delay,
       },
     },
   };
 
-  const letterVariants = {
+  const itemVariants = {
     hidden: {
       opacity: 0,
       y: yOffset,
@@ -68,7 +70,7 @@ export const LetterReveal: React.FC<LetterRevealProps> = ({
     },
   };
 
-  // Split into words so lines never wrap inside a word
+  // Split into words
   const words = text.split(' ');
 
   return (
@@ -86,28 +88,44 @@ export const LetterReveal: React.FC<LetterRevealProps> = ({
         aria-hidden="true"
         style={{ display: 'inline' }}
       >
-        {words.map((word, wordIndex) => (
-          <span
-            key={`w-${wordIndex}`}
-            style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
-          >
-            {word.split('').map((char, charIndex) => (
-              <motion.span
-                key={`c-${wordIndex}-${charIndex}`}
-                variants={letterVariants}
-                style={{
-                  display: 'inline-block',
-                  willChange: 'transform, opacity, filter',
-                }}
-              >
-                {char}
-              </motion.span>
-            ))}
-            {wordIndex < words.length - 1 && (
-              <span style={{ display: 'inline-block' }}>&nbsp;</span>
-            )}
-          </span>
-        ))}
+        {mode === 'word' ? (
+          words.map((word, wordIndex) => (
+            <motion.span
+              key={`word-${wordIndex}`}
+              variants={itemVariants}
+              style={{
+                display: 'inline-block',
+                willChange: 'transform, opacity, filter',
+                marginRight: wordIndex < words.length - 1 ? '0.28em' : 0,
+              }}
+            >
+              {word}
+            </motion.span>
+          ))
+        ) : (
+          words.map((word, wordIndex) => (
+            <span
+              key={`w-${wordIndex}`}
+              style={{ display: 'inline-block', whiteSpace: 'nowrap' }}
+            >
+              {word.split('').map((char, charIndex) => (
+                <motion.span
+                  key={`c-${wordIndex}-${charIndex}`}
+                  variants={itemVariants}
+                  style={{
+                    display: 'inline-block',
+                    willChange: 'transform, opacity, filter',
+                  }}
+                >
+                  {char}
+                </motion.span>
+              ))}
+              {wordIndex < words.length - 1 && (
+                <span style={{ display: 'inline-block' }}>&nbsp;</span>
+              )}
+            </span>
+          ))
+        )}
       </motion.span>
     </Component>
   );

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { ProjectRecord } from '../../types';
 import { LetterReveal } from '../common/LetterReveal';
 import { InfiniteCardsMarquee } from '../common/InfiniteCardsMarquee';
+import { SpotlightCard } from '../common/SpotlightCard';
 
 interface TechShowcaseSectionProps {
   projects: ProjectRecord[];
@@ -139,26 +140,46 @@ export const TechShowcaseSection: React.FC<TechShowcaseSectionProps> = ({
   });
 
   const renderPlateCard = (plate: StaticPlacard, uniqueKey?: string) => (
-    <article key={uniqueKey || plate.id} className="plate" data-t={plate.type}>
-      <div className="art">{plate.svg}</div>
+    <SpotlightCard key={uniqueKey || plate.id} className="plate" data-t={plate.type}>
+      <div className="art">
+        {/* Technical Scanner Effect Line */}
+        <div className="scanner-line" aria-hidden="true" />
+        <div className="tech-badge-overlay mono">
+          <span>{plate.code}</span>
+          <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+            <span className="pulse-dot" style={{ width: '4px', height: '4px' }} />
+            {plate.type === 'hw' ? 'HW // SCAN' : 'SW // SCAN'}
+          </span>
+        </div>
+        {plate.svg}
+      </div>
       <div className="pb">
         <div className="top mono">
-          <span>{plate.code}</span>
-          <span>{plate.category}</span>
+          <span className="code-tag">{plate.code}</span>
+          <span className="cat-pill">{plate.category}</span>
         </div>
         <h3>{plate.title}</h3>
         <p>{plate.description}</p>
         <div className="by mono">{plate.by}</div>
       </div>
-    </article>
+    </SpotlightCard>
   );
 
   const renderDynamicCard = (project: ProjectRecord, idx: number, uniqueKey?: string) => {
     const isHw = project.category.toLowerCase().includes('hardware');
     const code = `TG-${isHw ? 'H' : 'S'}${String(idx + 10).padStart(2, '0')}`;
     return (
-      <article key={uniqueKey || project.id} className="plate" data-t={isHw ? 'hw' : 'sw'}>
+      <SpotlightCard key={uniqueKey || project.id} className="plate" data-t={isHw ? 'hw' : 'sw'}>
         <div className="art">
+          {/* Technical Scanner Effect Line */}
+          <div className="scanner-line" aria-hidden="true" />
+          <div className="tech-badge-overlay mono">
+            <span>{code}</span>
+            <span style={{ display: 'inline-flex', alignItems: 'center', gap: '5px' }}>
+              <span className="pulse-dot" style={{ width: '4px', height: '4px' }} />
+              {isHw ? 'HW // SCAN' : 'SW // SCAN'}
+            </span>
+          </div>
           <svg viewBox="0 0 300 170" aria-hidden="true">
             <rect x="50" y="50" width="200" height="70" />
             <circle cx="150" cy="85" r="12" className="f" />
@@ -167,8 +188,8 @@ export const TechShowcaseSection: React.FC<TechShowcaseSectionProps> = ({
         </div>
         <div className="pb">
           <div className="top mono">
-            <span>{code}</span>
-            <span>{project.category}</span>
+            <span className="code-tag">{code}</span>
+            <span className="cat-pill">{project.category}</span>
           </div>
           <h3>{project.project_name}</h3>
           <p>{project.description}</p>
@@ -176,7 +197,7 @@ export const TechShowcaseSection: React.FC<TechShowcaseSectionProps> = ({
             {project.student_name} · {project.college_name}
           </div>
         </div>
-      </article>
+      </SpotlightCard>
     );
   };
 
